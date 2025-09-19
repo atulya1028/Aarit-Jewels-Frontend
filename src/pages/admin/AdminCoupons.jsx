@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// ✅ Strip trailing slashes so no double `//api/...`
+const API_URL = (import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app").replace(/\/+$/, "");
 
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState([]);
@@ -37,7 +38,7 @@ const AdminCoupons = () => {
     try {
       const payload = { ...form, code: form.code.toUpperCase() };
       await axios.post(`${API_URL}/api/coupons`, payload, {
-        headers: getAuthHeaders(),
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
       });
       setForm({ code: "", discount: "", expiryDate: "" });
       fetchCoupons();

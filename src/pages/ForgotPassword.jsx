@@ -1,15 +1,15 @@
-import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { useDispatch } from 'react-redux';
-import { forgotPassword } from '../slices/authSlice';
-import toast from 'react-hot-toast';
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { forgotPassword } from "../slices/authSlice";
+import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
   const dispatch = useDispatch();
 
   const validationSchema = Yup.object({
-    email: Yup.string().email('Invalid email').required('Email is required'),
+    email: Yup.string().email("Invalid email").required("Email is required"),
   });
 
   return (
@@ -29,7 +29,7 @@ const ForgotPassword = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d="M16.5 9.5V7a4.5 4.5 0 00-9 0v2.5M5 9.5h14v11H5v-11z"
+                d="M16 12H8m8-4H8m8 8H8m12-8V7a2 2 0 00-2-2H6a2 2 0 00-2 2v2m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V9"
               />
             </svg>
           </div>
@@ -41,17 +41,17 @@ const ForgotPassword = () => {
 
         {/* Form */}
         <Formik
-          initialValues={{ email: '' }}
+          initialValues={{ email: "" }}
           validationSchema={validationSchema}
           onSubmit={(values, { setSubmitting, resetForm }) => {
             dispatch(forgotPassword(values.email))
               .unwrap()
               .then(() => {
-                toast.success('Reset link sent! Check your email.');
+                toast.success("Reset link sent! Check your email.");
                 resetForm();
               })
               .catch((error) => {
-                toast.error(error?.message || 'Failed to send reset link');
+                toast.error(error || "Failed to send reset link");
               })
               .finally(() => setSubmitting(false));
           }}
@@ -86,7 +86,7 @@ const ForgotPassword = () => {
                 className="w-full bg-indigo-500 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-indigo-600 transition disabled:opacity-50"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Sending...' : 'Send Reset Link'}
+                {isSubmitting ? "Sending..." : "Send Reset Link"}
               </button>
             </Form>
           )}

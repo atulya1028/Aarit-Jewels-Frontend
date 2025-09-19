@@ -3,12 +3,14 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
+const API_URL = import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app";
+
 const Products = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     axios
-      .get('/api/products')
+      .get(`${API_URL}/api/products`)
       .then((res) => {
         if (Array.isArray(res.data.products)) {
           setProducts(res.data.products);
@@ -24,6 +26,11 @@ const Products = () => {
         toast.error('Error fetching products');
       });
   }, []);
+
+  const getImageUrl = (img) => {
+    if (!img) return "/placeholder.png";
+    return img.startsWith("http") ? img : `${API_URL}${img}`;
+  };
 
   return (
     <div className="min-h-screen bg-white px-6 py-10">
@@ -50,11 +57,7 @@ const Products = () => {
                 {/* Image */}
                 <div className="relative">
                   <img
-                    src={
-                      product.images && product.images.length > 0
-                        ? product.images[0]
-                        : '/placeholder.png'
-                    }
+                    src={getImageUrl(product.images?.[0])}
                     alt={product.name}
                     className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"

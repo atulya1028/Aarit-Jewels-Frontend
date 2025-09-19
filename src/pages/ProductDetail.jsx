@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '../slices/cartSlice';
 import toast from 'react-hot-toast';
 
+const API_URL = import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app";
+
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -13,9 +15,9 @@ const ProductDetail = () => {
 
   useEffect(() => {
     axios
-      .get(`/api/products/${id}`)
+      .get(`${API_URL}/api/products/${id}`)
       .then((res) => {
-        if (res.data && res.data.product) {
+        if (res.data?.product) {
           setProduct(res.data.product);
         } else {
           toast.error('Product not found');
@@ -33,6 +35,11 @@ const ProductDetail = () => {
     toast.success(`${product.name} added to cart`);
   };
 
+  const getImageUrl = (img) => {
+    if (!img) return "/placeholder.png";
+    return img.startsWith("http") ? img : `${API_URL}${img}`;
+  };
+
   if (!product) return <div className="text-center mt-16">Loading...</div>;
 
   return (
@@ -41,11 +48,7 @@ const ProductDetail = () => {
         {/* Product Image */}
         <div className="flex justify-center items-center">
           <img
-            src={
-              product.images && product.images.length > 0
-                ? product.images[0]
-                : '/placeholder.png'
-            }
+            src={getImageUrl(product.images?.[0])}
             alt={product.name}
             className="w-full h-[450px] object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-500"
             loading="lazy"

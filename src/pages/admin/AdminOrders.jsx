@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// ✅ Strip trailing slashes so no double `//api/...`
+const API_URL = (import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app").replace(/\/+$/, "");
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -11,6 +12,7 @@ const AdminOrders = () => {
     fetchOrders();
   }, []);
 
+  // ✅ Fetch all orders
   const fetchOrders = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/orders`, {
@@ -18,17 +20,22 @@ const AdminOrders = () => {
       });
       setOrders(res.data);
     } catch (err) {
+      console.error("Fetch orders error:", err);
       toast.error(err.response?.data?.message || "Failed to fetch orders");
     }
   };
 
+  // ✅ Update order status
   const handleStatusChange = async (id, status) => {
     try {
       await axios.put(
         `${API_URL}/api/orders/${id}`,
         { status },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
         }
       );
       toast.success("Order status updated");
@@ -38,6 +45,7 @@ const AdminOrders = () => {
         )
       );
     } catch (err) {
+      console.error("Update order error:", err);
       toast.error(err.response?.data?.message || "Failed to update order");
     }
   };
@@ -89,7 +97,9 @@ const AdminOrders = () => {
                 <div className="mb-4">
                   <p className="text-sm text-gray-500">Customer</p>
                   <p className="font-medium text-gray-900">
-                    {order.user.name} ({order.user.email})
+                    {order.user
+                      ? `${order.user.name} (${order.user.email})`
+                      : "Guest User"}
                   </p>
                 </div>
 

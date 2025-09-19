@@ -3,7 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// ✅ Strip trailing slash so no `//api/...`
+const API_URL = (import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app").replace(/\/+$/, "");
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -27,6 +28,7 @@ const AdminProducts = () => {
       const res = await axios.get(`${API_URL}/api/products`);
       setProducts(res.data.products || []);
     } catch (err) {
+      console.error("Fetch products error:", err);
       toast.error(err.response?.data?.message || "Failed to fetch products");
     }
   };
@@ -70,6 +72,7 @@ const AdminProducts = () => {
       resetForm();
       fetchProducts();
     } catch (err) {
+      console.error("Save product error:", err);
       toast.error(err.response?.data?.message || "Failed to save product");
     }
   };
@@ -113,15 +116,17 @@ const AdminProducts = () => {
       toast.success("Product deleted");
       setProducts(products.filter((p) => p._id !== id));
     } catch (err) {
+      console.error("Delete product error:", err);
       toast.error(err.response?.data?.message || "Failed to delete product");
     }
   };
 
-  // Image URL
+  // ✅ Safer image URL handler
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return "https://via.placeholder.com/200x200.png?text=No+Image";
-    if (imagePath.startsWith("http")) return imagePath;
-    return `${API_URL}${imagePath}`;
+    if (!imagePath)
+      return "https://via.placeholder.com/200x200.png?text=No+Image";
+    if (imagePath.startsWith("http")) return imagePath; // Cloudinary / external
+    return `${API_URL}${imagePath}`; // Local upload
   };
 
   return (
@@ -132,9 +137,14 @@ const AdminProducts = () => {
           <h2 className="text-2xl font-serif font-bold text-indigo-900 mb-6">
             {editingId ? "✏️ Edit Product" : "➕ Add Product"}
           </h2>
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form
+            onSubmit={handleSubmit}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
             <div>
-              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
               <input
                 type="text"
                 value={form.name}
@@ -145,7 +155,9 @@ const AdminProducts = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Price (₹)</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Price (₹)
+              </label>
               <input
                 type="number"
                 value={form.price}
@@ -156,17 +168,23 @@ const AdminProducts = () => {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Description
+              </label>
               <textarea
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
                 placeholder="Product description"
                 rows="3"
                 className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-indigo-400"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Category</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Category
+              </label>
               <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
@@ -180,17 +198,24 @@ const AdminProducts = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Images</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Images
+              </label>
               <input
                 type="file"
                 multiple
                 accept="image/jpeg,image/png"
                 onChange={(e) =>
-                  setForm({ ...form, images: Array.from(e.target.files).slice(0, 5) })
+                  setForm({
+                    ...form,
+                    images: Array.from(e.target.files).slice(0, 5),
+                  })
                 }
                 className="mt-1 p-2 w-full border rounded-lg"
               />
-              <p className="text-xs text-gray-500 mt-1">Max 5 images (JPEG/PNG)</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Max 5 images (JPEG/PNG)
+              </p>
             </div>
             <div className="md:col-span-2 flex space-x-3">
               <button
@@ -214,7 +239,9 @@ const AdminProducts = () => {
 
         {/* Products Grid */}
         <div>
-          <h2 className="text-2xl font-serif font-bold text-indigo-900 mb-6">All Products</h2>
+          <h2 className="text-2xl font-serif font-bold text-indigo-900 mb-6">
+            All Products
+          </h2>
           {products.length === 0 ? (
             <p className="text-gray-600">No products available</p>
           ) : (
@@ -233,9 +260,13 @@ const AdminProducts = () => {
                     alt={product.name}
                     className="w-full h-48 object-cover rounded-lg mb-4"
                   />
-                  <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {product.name}
+                  </h3>
                   <p className="text-indigo-600 font-medium">₹{product.price}</p>
-                  <p className="text-sm text-gray-500 truncate mt-1">{product.description}</p>
+                  <p className="text-sm text-gray-500 truncate mt-1">
+                    {product.description}
+                  </p>
                   <div className="mt-4 flex space-x-3">
                     <button
                       onClick={() => handleEdit(product)}

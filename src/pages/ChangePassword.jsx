@@ -1,19 +1,22 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { useDispatch } from 'react-redux';
-import { changePassword } from '../slices/authSlice';
-import toast from 'react-hot-toast';
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { changePassword } from "../slices/authSlice";
+import toast from "react-hot-toast";
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
 
   const validationSchema = Yup.object({
     oldPassword: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Old password is required'),
+      .min(6, "Password must be at least 6 characters")
+      .required("Current password is required"),
     newPassword: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('New password is required'),
+      .min(6, "Password must be at least 6 characters")
+      .required("New password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
+      .required("Confirm your new password"),
   });
 
   return (
@@ -29,11 +32,11 @@ const ChangePassword = () => {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="2" 
-                d="M12 11c0-1.657 1.567-3 3.5-3S19 9.343 19 11c0 3.5-7 7-7 7s-7-3.5-7-7c0-1.657 1.567-3 3.5-3S12 9.343 12 11z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 11c0-1.657 1.567-3 3.5-3S19 9.343 19 11c0 3.5-7 7-7 7s-7-3.5-7-7c0-1.657 1.567-3 3.5-3S12 9.343 12 11z"
               />
             </svg>
           </div>
@@ -45,17 +48,22 @@ const ChangePassword = () => {
 
         {/* Form */}
         <Formik
-          initialValues={{ oldPassword: '', newPassword: '' }}
+          initialValues={{ oldPassword: "", newPassword: "", confirmPassword: "" }}
           validationSchema={validationSchema}
           onSubmit={(values, { setSubmitting, resetForm }) => {
-            dispatch(changePassword(values))
+            dispatch(
+              changePassword({
+                oldPassword: values.oldPassword,
+                newPassword: values.newPassword,
+              })
+            )
               .unwrap()
               .then(() => {
-                toast.success('Password changed successfully');
+                toast.success("Password changed successfully");
                 resetForm();
               })
               .catch((error) => {
-                toast.error(error?.message || 'Password change failed');
+                toast.error(error || "Password change failed");
               })
               .finally(() => {
                 setSubmitting(false);
@@ -70,12 +78,12 @@ const ChangePassword = () => {
                   htmlFor="oldPassword"
                   className="block font-medium text-gray-700 mb-1"
                 >
-                  Old Password
+                  Current Password
                 </label>
                 <Field
                   name="oldPassword"
                   type="password"
-                  placeholder="Enter your old password"
+                  placeholder="Enter your current password"
                   className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 />
                 <ErrorMessage
@@ -109,13 +117,34 @@ const ChangePassword = () => {
                 </p>
               </div>
 
+              {/* Confirm Password */}
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block font-medium text-gray-700 mb-1"
+                >
+                  Confirm New Password
+                </label>
+                <Field
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Re-enter your new password"
+                  className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                />
+                <ErrorMessage
+                  name="confirmPassword"
+                  component="p"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+
               {/* Submit */}
               <button
                 type="submit"
                 className="w-full bg-indigo-500 text-white font-semibold py-3 rounded-lg shadow hover:bg-indigo-600 transition disabled:opacity-50"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Changing...' : 'Change Password'}
+                {isSubmitting ? "Changing..." : "Change Password"}
               </button>
             </Form>
           )}

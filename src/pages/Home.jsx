@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+// ✅ Use environment variable or fallback
+const API_URL = import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app";
+
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -20,9 +23,10 @@ const Home = () => {
   const [priceRange, setPriceRange] = useState([0, 50000]);
   const [sortOrder, setSortOrder] = useState(""); // "asc" | "desc"
 
+  // ✅ Fetch products from backend
   useEffect(() => {
     axios
-      .get("/api/products")
+      .get(`${API_URL}/api/products`)
       .then((res) => {
         if (Array.isArray(res.data.products)) {
           setProducts(res.data.products.slice(0, 12));
@@ -32,13 +36,14 @@ const Home = () => {
           toast.error("Failed to load products");
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Error fetching products:", err.message);
         setProducts([]);
         toast.error("Error fetching products");
       });
   }, []);
 
-  // Filtering + Sorting
+  // ✅ Filtering + Sorting
   useEffect(() => {
     let filtered = [...products];
 
@@ -61,8 +66,6 @@ const Home = () => {
 
   return (
     <div className="font-sans space-y-16 bg-white">
-      {/* Hero Banner */}
-
       {/* 🔽 Compact Filter Section */}
       <section className="px-6 md:px-60">
         <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
@@ -117,6 +120,8 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Hero Banner */}
       <section className="relative w-full">
         <div className="h-[40vh] max-w-6xl mx-auto bg-gradient-to-r from-indigo-100 via-purple-100 to-blue-100 flex items-center justify-center">
           <div className="text-center text-gray-900 px-6">
@@ -190,7 +195,6 @@ const Home = () => {
           that symbolizes elegance, love, and timeless beauty.
         </p>
       </section>
-
     </div>
   );
 };

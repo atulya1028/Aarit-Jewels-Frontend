@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+// ✅ Use backend URL from env or fallback
+const API_URL = (import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app").replace(/\/+$/, "");
+
 const Orders = () => {
-  const { user } = useSelector((state) => state.auth);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get('/api/orders/myorders', {
+        const res = await axios.get(`${API_URL}/api/orders/myorders`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
-        setOrders(res.data);
+        setOrders(res.data || []);
       } catch (err) {
         toast.error(err.response?.data?.message || 'Failed to load orders');
       }
@@ -75,12 +76,12 @@ const Orders = () => {
                 {order.address && (
                   <div className="mb-4 bg-gray-50 border rounded-lg p-4">
                     <h3 className="text-lg font-semibold mb-2">Shipping Address</h3>
-                    <p className="text-gray-800 font-medium">{order.address.name}</p>
-                    <p className="text-gray-600">{order.address.street}</p>
+                    <p className="text-gray-800 font-medium">{order.address?.name}</p>
+                    <p className="text-gray-600">{order.address?.street}</p>
                     <p className="text-gray-600">
-                      {order.address.city}, {order.address.state} - {order.address.zip}
+                      {order.address?.city}, {order.address?.state} - {order.address?.zip}
                     </p>
-                    <p className="text-gray-600">Phone: {order.address.phone}</p>
+                    <p className="text-gray-600">Phone: {order.address?.phone}</p>
                   </div>
                 )}
 
@@ -88,21 +89,21 @@ const Orders = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Items</h3>
                   <ul className="divide-y divide-gray-100">
-                    {order.items.map((item) => (
+                    {order.items?.map((item) => (
                       <li
-                        key={item.product._id}
+                        key={item.product?._id || Math.random()}
                         className="py-3 flex justify-between items-center"
                       >
                         <div>
                           <p className="font-medium text-gray-800">
-                            {item.product.name}
+                            {item.product?.name || 'Unknown Product'}
                           </p>
                           <p className="text-sm text-gray-500">
                             Quantity: {item.quantity}
                           </p>
                         </div>
                         <p className="font-medium text-gray-700">
-                          ₹{item.product.price * item.quantity}
+                          ₹{item.product?.price ? item.product.price * item.quantity : 0}
                         </p>
                       </li>
                     ))}

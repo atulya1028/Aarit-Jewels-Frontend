@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchCart, updateCart, clearCart } from '../slices/cartSlice';
-import { Link } from 'react-router-dom';
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCart, updateCart, clearCart } from "../slices/cartSlice";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
   const { items } = useSelector((state) => state.cart);
@@ -12,9 +12,18 @@ const Cart = () => {
   }, [dispatch]);
 
   const total = items.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
+    (acc, item) =>
+      acc + (item.product?.price || 0) * (item.quantity || 0),
     0
   );
+
+  // ✅ Helper for image handling
+  const getImageUrl = (img) =>
+    img?.startsWith("http")
+      ? img
+      : img
+      ? `${import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app"}${img}`
+      : "https://via.placeholder.com/200x200.png?text=No+Image";
 
   return (
     <div className="min-h-screen bg-indigo-50 px-6 py-10">
@@ -41,25 +50,29 @@ const Cart = () => {
             <div className="grid gap-6">
               {items.map((item) => (
                 <div
-                  key={item.product._id}
+                  key={item.product?._id || Math.random()}
                   className="flex items-center justify-between bg-indigo-50 border border-indigo-100 rounded-xl p-4 shadow-sm hover:shadow-md transition"
                 >
                   {/* Product Info */}
                   <div className="flex items-center space-x-4">
                     <img
-                      src={
-                        item.product.images?.[0] || '/placeholder.png'
-                      }
-                      alt={item.product.name}
+                      src={getImageUrl(item.product?.images?.[0])}
+                      alt={item.product?.name || "Product"}
                       className="w-20 h-20 object-cover rounded-lg shadow"
                     />
                     <div>
-                      <p className="font-semibold text-gray-900">
-                        {item.product.name}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        ₹{item.product.price} each
-                      </p>
+                      {item.product ? (
+                        <>
+                          <p className="font-semibold text-gray-900">
+                            {item.product.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            ₹{item.product.price} each
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-gray-500">Product unavailable</p>
+                      )}
                     </div>
                   </div>
 
@@ -67,9 +80,10 @@ const Cart = () => {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() =>
+                        item.quantity > 1 &&
                         dispatch(
                           updateCart({
-                            productId: item.product._id,
+                            productId: item.product?._id,
                             quantity: item.quantity - 1,
                           })
                         )
@@ -85,7 +99,7 @@ const Cart = () => {
                       onClick={() =>
                         dispatch(
                           updateCart({
-                            productId: item.product._id,
+                            productId: item.product?._id,
                             quantity: item.quantity + 1,
                           })
                         )
@@ -98,7 +112,7 @@ const Cart = () => {
 
                   {/* Price */}
                   <p className="font-bold text-indigo-700 text-lg">
-                    ₹{item.product.price * item.quantity}
+                    ₹{(item.product?.price || 0) * item.quantity}
                   </p>
                 </div>
               ))}
