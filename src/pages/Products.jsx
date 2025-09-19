@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-const API_URL = import.meta.env.VITE_API_URL || "https://vercel.com/atulya1028s-projects/aarit-jewels-backend";
+const API_URL = import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app";
 
 const Products = () => {
   const [products, setProducts] = useState([]);

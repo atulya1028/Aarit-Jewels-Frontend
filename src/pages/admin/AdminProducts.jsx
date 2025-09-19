@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // ✅ Strip trailing slash so no `//api/...`
-const API_URL = (import.meta.env.VITE_API_URL || "https://vercel.com/atulya1028s-projects/aarit-jewels-backend").replace(/\/+$/, "");
+const API_URL = (import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app").replace(/\/+$/, "");
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);

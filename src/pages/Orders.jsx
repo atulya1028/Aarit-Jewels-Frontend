@@ -3,7 +3,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 // ✅ Use backend URL from env or fallback
-const API_URL = (import.meta.env.VITE_API_URL || "https://vercel.com/atulya1028s-projects/aarit-jewels-backend").replace(/\/+$/, "");
+const API_URL = (import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app").replace(/\/+$/, "");
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
