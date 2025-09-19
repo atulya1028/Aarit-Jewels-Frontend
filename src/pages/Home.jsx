@@ -12,7 +12,7 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
-  const [categories] = useState(["All", "Rings", "Earrings"]);
+  const [categories] = useState(["All", "Bracelets", "Earrings", "Pendants", "Rings" ]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState([0, 50000]);
   const [sortOrder, setSortOrder] = useState(""); // asc | desc

@@ -190,10 +190,9 @@ const AdminProducts = () => {
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
                 className="mt-1 p-3 w-full border rounded-lg focus:ring-2 focus:ring-indigo-400"
               >
-                <option value="Earrings">Earrings</option>
                 <option value="Bracelets">Bracelets</option>
+                <option value="Earrings">Earrings</option>
                 <option value="Pendants">Pendants</option>
-                <option value="Necklaces">Necklaces</option>
                 <option value="Rings">Rings</option>
               </select>
             </div>
