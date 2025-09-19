@@ -22,7 +22,7 @@ const Cart = () => {
     img?.startsWith("http")
       ? img
       : img
-      ? `${import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app"}${img}`
+      ? `${import.meta.env.VITE_API_URL || "https://vercel.com/atulya1028s-projects/aarit-jewels-backend"}${img}`
       : "https://via.placeholder.com/200x200.png?text=No+Image";
 
   return (

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://aarit-jewels-backend.vercel.app';
+const API_URL = import.meta.env.VITE_API_URL || 'https://vercel.com/atulya1028s-projects/aarit-jewels-backend';
 
 const initialState = {
   user: null,

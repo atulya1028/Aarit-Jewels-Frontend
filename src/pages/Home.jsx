@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 // ✅ Always ensure base URL ends with /
 const API_URL =
-  (import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app") +
+  (import.meta.env.VITE_API_URL || "https://vercel.com/atulya1028s-projects/aarit-jewels-backend") +
   "/";
 
 const Home = () => {
