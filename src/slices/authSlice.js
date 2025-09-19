@@ -13,7 +13,7 @@ const initialState = {
 
 // ✅ Register
 export const registerUser = createAsyncThunk(
-  'auth/registerUser',
+  'auth/register',
   async (userData, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${API_URL}/api/auth/register`, userData, {
@@ -36,7 +36,7 @@ export const registerUser = createAsyncThunk(
 
 // ✅ Login
 export const loginUser = createAsyncThunk(
-  'auth/loginUser',
+  'auth/login',
   async (userData, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${API_URL}/api/auth/login`, userData, {
@@ -55,7 +55,7 @@ export const loginUser = createAsyncThunk(
 
 // ✅ Current user
 export const getCurrentUser = createAsyncThunk(
-  'auth/getCurrentUser',
+  'auth/me',
   async (_, { rejectWithValue }) => {
     const token = localStorage.getItem('token');
     if (!token) return rejectWithValue('No token found');
@@ -75,7 +75,7 @@ export const getCurrentUser = createAsyncThunk(
 
 // ✅ Change password
 export const changePassword = createAsyncThunk(
-  'auth/changePassword',
+  'auth/change-password',
   async (passwordData, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
@@ -96,7 +96,7 @@ export const changePassword = createAsyncThunk(
 
 // ✅ Forgot password
 export const forgotPassword = createAsyncThunk(
-  'auth/forgotPassword',
+  'auth/forgot-password',
   async (email, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${API_URL}/api/auth/forgot-password`, { email }, {
@@ -113,7 +113,7 @@ export const forgotPassword = createAsyncThunk(
 
 // ✅ Reset password
 export const resetPassword = createAsyncThunk(
-  'auth/resetPassword',
+  'auth/reset-password',
   async ({ token, password }, { rejectWithValue }) => {
     try {
       const res = await axios.put(`${API_URL}/api/auth/reset-password/${token}`, { password }, {
