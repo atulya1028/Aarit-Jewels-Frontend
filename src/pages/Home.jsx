@@ -3,31 +3,25 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-// ✅ Use environment variable or fallback
-const API_URL = import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app";
+// ✅ Always ensure base URL ends with /
+const API_URL =
+  (import.meta.env.VITE_API_URL || "https://aarit-jewels-backend.vercel.app") +
+  "/";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [categories] = useState([
-    "All",
-    "Rings",
-    "Earrings",
-    "Bracelets & Bangles",
-    "Necklaces & Pendants",
-    "Mangalsutras",
-    "Solitaires",
-    "Trending",
-  ]);
+
+  const [categories] = useState(["All", "Rings", "Earrings"]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceRange, setPriceRange] = useState([0, 50000]);
-  const [sortOrder, setSortOrder] = useState(""); // "asc" | "desc"
+  const [sortOrder, setSortOrder] = useState(""); // asc | desc
 
   // ✅ Fetch products from backend
   useEffect(() => {
-    axios
-      .get(`${API_URL}/api/products`)
-      .then((res) => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get(`${API_URL}api/products`);
         if (Array.isArray(res.data.products)) {
           setProducts(res.data.products.slice(0, 12));
           setFilteredProducts(res.data.products.slice(0, 12));
@@ -35,26 +29,30 @@ const Home = () => {
           setProducts([]);
           toast.error("Failed to load products");
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching products:", err.message);
         setProducts([]);
         toast.error("Error fetching products");
-      });
+      }
+    };
+    fetchProducts();
   }, []);
 
   // ✅ Filtering + Sorting
   useEffect(() => {
     let filtered = [...products];
 
+    // Category filter
     if (selectedCategory !== "All") {
       filtered = filtered.filter((p) => p.category === selectedCategory);
     }
 
+    // Price filter
     filtered = filtered.filter(
       (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
     );
 
+    // Sorting
     if (sortOrder === "asc") {
       filtered.sort((a, b) => a.price - b.price);
     } else if (sortOrder === "desc") {
